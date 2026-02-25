@@ -1,0 +1,9 @@
+To update the rep
+
+git add .
+git commit -m "Update"
+git push
+
+
+To get current version from web
+git pull
