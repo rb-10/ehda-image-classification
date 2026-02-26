@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 from pathlib import Path
 
-def clip_to_combined_image(video_path, output_size=(224, 224)):
+def clip_to_combined_image(video_path, output_size=(512, 512)):
     """
     Returns a 3-channel image where:
       - Channel 0 (R): first frame (grayscale)
@@ -97,6 +97,12 @@ def process_dataset(input_dir, output_dir):
 
 
 if __name__ == "__main__":
+    process_dataset()
+    
+    
+    
+    """
+    Test case:
     img = clip_to_combined_image("video.mp4")
     cv2.imwrite("combined_output.png", img)
     print(f"Output shape: {img.shape}")  # should be (224, 224, 3)
@@ -107,3 +113,4 @@ if __name__ == "__main__":
     cv2.imshow("Flow magnitude", img[..., 2])
     cv2.waitKey(0)
     cv2.destroyAllWindows()
+    """
