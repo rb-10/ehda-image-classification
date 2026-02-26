@@ -5,7 +5,8 @@ import numpy as np
 from pathlib import Path
 
 path = Path('datasets/open_setup/optical images')
-print(path.exists())
+
+
 dls = DataBlock(
     blocks=(ImageBlock, CategoryBlock), 
     get_items=get_image_files, 
