@@ -97,7 +97,7 @@ def process_dataset(input_dir, output_dir):
 
 
 if __name__ == "__main__":
-    process_dataset()
+    process_dataset("datasets\\open_setup\\videos\\undefined", "datasets\\open_setup\\optical images\\undefined")
     
     
     
