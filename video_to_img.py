@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 from pathlib import Path
 
-def clip_to_combined_image(video_path, output_size=(512, 512)):
+def clip_to_combined_image(video_path, output_size=(256, 256)):
     """
     Returns a 3-channel image where:
       - Channel 0 (R): first frame (grayscale)
@@ -97,7 +97,10 @@ def process_dataset(input_dir, output_dir):
 
 
 if __name__ == "__main__":
-    process_dataset("datasets\\open_setup\\videos\\undefined", "datasets\\open_setup\\optical images\\undefined")
+    # Set the input and output base directories as requested
+    input_base = r"C:\Users\HV\Desktop\bruno_work\EHDA Image Classificaton\ehda-image-classification\datasets\open_setup\videos\training clips"
+    output_base = r"C:\Users\HV\Desktop\bruno_work\EHDA Image Classificaton\ehda-image-classification\datasets\open_setup\optical images"
+    process_dataset(input_base, output_base)
     
     
     

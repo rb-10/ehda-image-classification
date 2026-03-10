@@ -1,10 +1,9 @@
-from video_to_img import process_dataset
 from fastai.vision.all import *
 import cv2
 import numpy as np
 from pathlib import Path
 
-path = Path('datasets/open_setup/optical images_cropped')
+path = Path('datasets/open_setup/optical images')
 
 if __name__ == "__main__":
 
@@ -19,4 +18,4 @@ if __name__ == "__main__":
 
     learn = vision_learner(dls, resnet34, metrics=accuracy)
     learn.fine_tune(5)
-    learn.export("my_model.pkl")
+    #learn.export("my_model.pkl")

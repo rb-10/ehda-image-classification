@@ -1,0 +1,135 @@
+Using preprocessinf based on this script video_pre_processing.py & video_to_img
+Resizing images using squish
+
+
+============================================================
+dls = DataBlock(
+    blocks=(ImageBlock, CategoryBlock), 
+    get_items=get_image_files, 
+    splitter=RandomSplitter(valid_pct=0.2, seed=42),
+    get_y=parent_label,
+    item_tfms=[Resize(192, method='squish')]
+).dataloaders(path, bs=32)
+
+
+learn = vision_learner(dls, resnet34, metrics=accuracy)
+learn.fine_tune(5)
+epoch	train_loss	valid_loss	accuracy	time
+0	0.379805	0.225779	0.931035	00:34
+1	0.238920	0.088179	0.977012	00:36
+2	0.191795	0.068798	0.977012	00:35
+3	0.145654	0.065894	0.988506	00:32
+4	0.124265	0.067230	0.988506	00:32
+
+
+
+
+
+learn = vision_learner(dls, resnet18, metrics=accuracy)
+learn.fine_tune(5)
+epoch	train_loss	valid_loss	accuracy	time
+0	0.409183	0.094052	0.988506	00:19
+1	0.254866	0.076231	0.977012	00:21
+2	0.184270	0.022546	0.988506	00:19
+3	0.139391	0.045105	0.977012	00:19
+4	0.111599	0.032234	0.977012	00:19
+
+
+
+learn = vision_learner(dls, squeezenet1_0, metrics=accuracy)
+learn.fine_tune(5)
+epoch	train_loss	valid_loss	accuracy	time
+0	0.398872	0.068990	0.977012	00:18
+1	0.284733	0.108919	0.965517	00:18
+2	0.213709	0.022288	1.000000	00:22
+3	0.164572	0.020552	1.000000	00:18
+4	0.131790	0.099606	0.988506	00:17
+
+
+
+learn = vision_learner(dls, squeezenet1_1, metrics=accuracy)
+learn.fine_tune(5)
+epoch	train_loss	valid_loss	accuracy	time
+0	0.349148	0.130802	0.965517	00:10
+1	0.268902	0.191247	0.954023	00:09
+2	0.208637	0.069243	0.965517	00:10
+3	0.167441	0.105133	0.965517	00:09
+4	0.149156	0.078874	0.954023	00:09
+
+
+
+learn = vision_learner(dls, densenet121, metrics=accuracy)
+learn.fine_tune(5)
+epoch	train_loss	valid_loss	accuracy	time
+0	0.297253	0.246237	0.896552	00:58
+1	0.192686	0.099919	0.965517	00:57
+2	0.144491	0.038924	0.988506	00:57
+3	0.110193	0.015223	1.000000	00:57
+4	0.088020	0.014659	1.000000	00:58
+
+============================================================
+
+
+
+Using preprocessinf based on this script video_pre_processing.py & video_to_img
+Using 256x256 images
+
+============================================================
+dls = DataBlock(
+    blocks=(ImageBlock, CategoryBlock), 
+    get_items=get_image_files, 
+    splitter=RandomSplitter(valid_pct=0.2, seed=42),
+    get_y=parent_label,
+).dataloaders(path, bs=32)
+
+
+learn = vision_learner(dls, resnet34, metrics=accuracy)
+learn.fine_tune(5)
+epoch	train_loss	valid_loss	accuracy	time
+0	0.440784	0.300914	0.908046	00:50
+1	0.281681	0.047573	0.977012	00:50
+2	0.199327	0.070987	0.965517	00:50
+3	0.141998	0.051588	0.954023	00:50
+4	0.113408	0.061217	0.954023	00:50
+
+
+
+
+
+learn = vision_learner(dls, resnet18, metrics=accuracy)
+learn.fine_tune(5)
+epoch	train_loss	valid_loss	accuracy	time
+0	0.415789	0.107680	0.988506	00:29
+1	0.260560	0.048943	0.965517	00:29
+2	0.196579	0.092991	0.977012	00:29
+3	0.157619	0.095225	0.977012	00:29
+4	0.119707	0.091546	0.977012	00:29
+
+
+
+learn = vision_learner(dls, squeezenet1_0, metrics=accuracy)
+learn.fine_tune(5)
+epoch	train_loss	valid_loss	accuracy	time
+0	0.337206	0.033306	1.000000	00:25
+1	0.250094	0.064955	0.977012	00:25
+2	0.189495	0.043781	0.988506	00:25
+3	0.151282	0.026667	0.977012	00:25
+4	0.120693	0.028842	0.988506	00:26
+
+
+
+learn = vision_learner(dls, squeezenet1_1, metrics=accuracy)
+learn.fine_tune(5)
+epoch	train_loss	valid_loss	accuracy	time
+0	0.261930	0.067899	0.977012	00:14
+1	0.212083	0.069133	0.977012	00:14
+2	0.202999	0.028712	0.988506	00:14
+3	0.153814	0.024003	0.988506	00:14
+4	0.129690	0.021683	0.988506	00:15
+
+
+
+
+learn = vision_learner(dls, densenet121, metrics=accuracy)
+learn.fine_tune(5)
+
