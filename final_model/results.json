@@ -1,0 +1,15 @@
+{
+    "model": "squeezenet1_1",
+    "dataset": "optical_images2",
+    "crop": false,
+    "epochs": 10,
+    "valid_split": 0.2,
+    "classes": [
+        "cone_jet",
+        "dripping",
+        "intermitent",
+        "multi_jet"
+    ],
+    "accuracy": 1.0,
+    "val_loss": 0.00421494385227561
+}
