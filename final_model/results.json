@@ -8,8 +8,9 @@
         "cone_jet",
         "dripping",
         "intermitent",
-        "multi_jet"
+        "multi_jet",
+        "undefined"
     ],
-    "accuracy": 1.0,
-    "val_loss": 0.00421494385227561
+    "accuracy": 0.8627451062202454,
+    "val_loss": 0.6382328867912292
 }

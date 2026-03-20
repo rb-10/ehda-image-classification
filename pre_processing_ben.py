@@ -403,8 +403,8 @@ if __name__ == "__main__":
     from pathlib import Path
 
     # Set input and output base directories
-    input_base = Path(r"C:\Users\HV\Desktop\bruno_work\EHDA Image Classificaton\ehda-image-classification\datasets\open_setup\long_clips")
-    output_base = Path(r"C:\Users\HV\Desktop\bruno_work\EHDA Image Classificaton\ehda-image-classification\datasets\open_setup")
+    input_base = Path(r"C:\Users\HV\Desktop\bruno_work\save_electrospray\dataset\images\Propanolol2")
+    output_base = Path(r"C:\Users\HV\Desktop\bruno_work\save_electrospray\dataset\processed_images\Propanolol2 -")
 
     # Loop through each class folder
     for class_folder in input_base.iterdir():
