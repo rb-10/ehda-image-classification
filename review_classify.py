@@ -26,7 +26,7 @@ from pathlib import Path
 from fastai.vision.all import load_learner, PILImage
 
 # ── Config ────────────────────────────────────────────────────────────
-LIQUID       = "EWG343"
+LIQUID       = "EW82"
 MODEL_PATH   = "final_model/export.pkl"
 
 BASE         = Path("C:/Users/HV/Desktop/bruno_work/save_electrospray/dataset")
