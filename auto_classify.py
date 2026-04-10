@@ -20,14 +20,12 @@ import tempfile
 
 
 # ── Config ────────────────────────────────────────────────────────────
-LIQUID       = "Propanolol2"    # change to your second solution name
 MODEL_PATH   = "final_model/export.pkl"
-CONFIDENCE_THRESHOLD = 0.80   # below this → saved as "unconclusive"
+CONFIDENCE_THRESHOLD = 0.60   # below this → saved as "unconclusive"
 
-BASE         = Path(f"C:/Users/HV/Desktop/bruno_work/save_electrospray/dataset")
-JSON_FOLDER  = BASE / "current" / LIQUID / "unclassified"
-INPUT_FOLDER = BASE / "processed_images"  / LIQUID / "unclassified"
-OUTPUT_BASE  = BASE / "processed_images"  / LIQUID
+JSON_FOLDER  = Path(r"C:\Users\HV\Desktop\bruno_work\save_electrospray\Ethanol\Current")
+INPUT_FOLDER = Path(r"C:\Users\HV\Desktop\bruno_work\save_electrospray\Ethanol\PROCESSED CLIPS")
+OUTPUT_BASE  = Path(r"C:\Users\HV\Desktop\bruno_work\save_electrospray\Ethanol\CLASSIFIED")
 
 CLASSES = ["cone_jet", "dripping", "intermitent", "multi_jet", "unconclusive", "undefined"]
 
@@ -120,8 +118,9 @@ for img_path in images:
     if chosen_class not in CLASSES:
         chosen_class = "unconclusive"
 
-    # Update JSON
-    data[sample_key]["spray_mode"] = chosen_class
+
+    # Update JSON: save classification in 'image_classification' field
+    data[sample_key]["image_classification"] = chosen_class
     save_json(experiment_idx)
 
     # Move image

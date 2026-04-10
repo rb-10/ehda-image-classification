@@ -25,3 +25,5 @@ datasets/
 data/
 experiments/
 dataset/
+plots_zoom/
+plots_full/
