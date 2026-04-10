@@ -22,10 +22,10 @@ import tempfile
 # ── Config ────────────────────────────────────────────────────────────
 MODEL_PATH   = "final_model/export.pkl"
 CONFIDENCE_THRESHOLD = 0.60   # below this → saved as "unconclusive"
-
-JSON_FOLDER  = Path(r"C:\Users\HV\Desktop\bruno_work\save_electrospray\Ethanol\Current")
-INPUT_FOLDER = Path(r"C:\Users\HV\Desktop\bruno_work\save_electrospray\Ethanol\PROCESSED CLIPS")
-OUTPUT_BASE  = Path(r"C:\Users\HV\Desktop\bruno_work\save_electrospray\Ethanol\CLASSIFIED")
+SOLUTION = "Ethanol"
+JSON_FOLDER  = Path(rf"C:\Users\HV\Desktop\bruno_work\save_electrospray\{SOLUTION}\Current")
+INPUT_FOLDER = Path(rf"C:\Users\HV\Desktop\bruno_work\save_electrospray\{SOLUTION}\PROCESSED CLIPS")
+OUTPUT_BASE  = Path(rf"C:\Users\HV\Desktop\bruno_work\save_electrospray\{SOLUTION}\CLASSIFIED")
 
 CLASSES = ["cone_jet", "dripping", "intermitent", "multi_jet", "unconclusive", "undefined"]
 
@@ -90,6 +90,7 @@ for img_path in images:
     sample_idx     = int(match.group(2))
     sample_key     = f"sample {sample_idx}"
 
+
     result = load_json(experiment_idx)
     if result is None:
         skipped.append(img_path.name)
@@ -99,6 +100,18 @@ for img_path in images:
     if sample_key not in data:
         print(f"  [SKIP] '{sample_key}' not in experiment_{experiment_idx}.json")
         skipped.append(img_path.name)
+        continue
+
+
+    # Check if already classified
+    if "image_classification" in data[sample_key]:
+        chosen_class = data[sample_key]["image_classification"]
+        print(f"  [SKIP] Already classified: {img_path.name} -> {chosen_class}")
+        skipped.append(img_path.name)
+        # Copy image to correct class folder
+        dest = OUTPUT_BASE / chosen_class / img_path.name
+        if not dest.exists():
+            shutil.copy2(str(img_path), str(dest))
         continue
 
     # Run model
@@ -118,14 +131,14 @@ for img_path in images:
     if chosen_class not in CLASSES:
         chosen_class = "unconclusive"
 
-
     # Update JSON: save classification in 'image_classification' field
     data[sample_key]["image_classification"] = chosen_class
     save_json(experiment_idx)
 
-    # Move image
+
+    # Copy image
     dest = OUTPUT_BASE / chosen_class / img_path.name
-    shutil.move(str(img_path), str(dest))
+    shutil.copy2(str(img_path), str(dest))
 
     print(f"{img_path.name:<40} {chosen_class:<20} {confidence:>9.1%}")
 
@@ -134,5 +147,3 @@ for exp_idx in json_cache:
     save_json(exp_idx)
 
 print(f"\n[AUTO] Done. {len(images) - len(skipped)} classified, {len(skipped)} skipped.")
-if skipped:
-    print(f"[AUTO] Skipped: {skipped}")

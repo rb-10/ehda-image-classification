@@ -2,8 +2,8 @@ from pre_processing_ben import *
 from pathlib import Path
 import cv2
 
-class_folder = Path(r"C:\Users\HV\Desktop\bruno_work\save_electrospray\filmhood\SPLIT CLIPS")
-output_base = Path(r"C:\Users\HV\Desktop\bruno_work\save_electrospray\filmhood\PROCESSED CLIPS")
+class_folder = Path(r"C:\Users\HV\Desktop\bruno_work\save_electrospray\Ethanol\SPLIT CLIPS")
+output_base = Path(r"C:\Users\HV\Desktop\bruno_work\save_electrospray\Ethanol\PROCESSED CLIPS")
 
 video_files = sorted(list(class_folder.glob('*.mp4')), reverse=True)
 
