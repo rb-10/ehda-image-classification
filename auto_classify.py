@@ -21,13 +21,14 @@ import tempfile
 
 # ── Config ────────────────────────────────────────────────────────────
 MODEL_PATH   = "final_model/export.pkl"
-CONFIDENCE_THRESHOLD = 0.60   # below this → saved as "unconclusive"
+CONFIDENCE_THRESHOLD = 0.90   # below this → saved as "unconclusive"
+RECLASSIFY_EXISTING = True  # True = re-run classification even if JSON already has image_classification
 SOLUTION = "Ethanol"
 JSON_FOLDER  = Path(rf"C:\Users\HV\Desktop\bruno_work\save_electrospray\{SOLUTION}\Current")
 INPUT_FOLDER = Path(rf"C:\Users\HV\Desktop\bruno_work\save_electrospray\{SOLUTION}\PROCESSED CLIPS")
 OUTPUT_BASE  = Path(rf"C:\Users\HV\Desktop\bruno_work\save_electrospray\{SOLUTION}\CLASSIFIED")
 
-CLASSES = ["cone_jet", "dripping", "intermitent", "multi_jet", "unconclusive", "undefined"]
+CLASSES = ["cone_jet", "dripping", "intermitent", "multi_jet", "unconclusive"]
 
 # ── Setup ─────────────────────────────────────────────────────────────
 for cls in CLASSES:
@@ -104,15 +105,20 @@ for img_path in images:
 
 
     # Check if already classified
-    if "image_classification" in data[sample_key]:
-        chosen_class = data[sample_key]["image_classification"]
-        print(f"  [SKIP] Already classified: {img_path.name} -> {chosen_class}")
-        skipped.append(img_path.name)
-        # Copy image to correct class folder
-        dest = OUTPUT_BASE / chosen_class / img_path.name
-        if not dest.exists():
-            shutil.copy2(str(img_path), str(dest))
-        continue
+    already_classified = "image_classification" in data[sample_key]
+    if already_classified:
+        previous_class = data[sample_key]["image_classification"]
+        if not RECLASSIFY_EXISTING:
+            chosen_class = previous_class
+            print(f"  [SKIP] Already classified: {img_path.name} -> {chosen_class}")
+            skipped.append(img_path.name)
+            # Copy image to correct class folder
+            dest = OUTPUT_BASE / chosen_class / img_path.name
+            if not dest.exists():
+                shutil.copy2(str(img_path), str(dest))
+            continue
+        else:
+            print(f"  [RECLASSIFY] Reclassifying: {img_path.name} (was {previous_class})")
 
     # Run model
     img              = PILImage.create(img_path)
