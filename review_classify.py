@@ -13,6 +13,7 @@ Controls:
 Usage:
     Set the liquid name below and run:
     python review_classify.py
+    pip install fastai opencv-python iPython
 """
 
 import os
@@ -23,30 +24,50 @@ import tempfile
 import cv2
 import numpy as np
 from pathlib import Path
-from fastai.vision.all import load_learner, PILImage
 
 # ── Config ────────────────────────────────────────────────────────────
-LIQUID       = "EW82"
-MODEL_PATH   = "final_model/export.pkl"
+liquid = "Ethanol"
+base = Path(r"C:\Users\Bruno Duarte\Documents\datasets")
+json_folder = base / liquid / "Current"
+images_folder = base / liquid / "PROCESSED CLIPS"
+clips_folder = base / liquid / "SPLIT CLIPS"
+output_base = base / liquid / "CLASSIFIED"
 
-BASE         = Path("C:/Users/HV/Desktop/bruno_work/save_electrospray/dataset")
-JSON_FOLDER  = BASE / "current"  / LIQUID / "unclassified"
-OUTPUT_BASE  = BASE / "processed_images"   / LIQUID
-VIDEO_FOLDER = BASE / "images"   / LIQUID / "unclassified"  # videos stay here, never moved
+
+# If json_files is empty, the script will load all available JSON files in json_folder.
+# Otherwise specify the exact filenames to review, e.g. ["experiment_0.json", "experiment_1.json"].
+JSON_FILES   = ['experiment_16.json', 'experiment_17.json']
 
 CLASSES = ["cone_jet", "dripping", "intermitent", "multi_jet", "unconclusive", "undefined"]
-
-# ── Load model ────────────────────────────────────────────────────────
-print(f"[REVIEW] Loading model: {MODEL_PATH}")
-learn = load_learner(MODEL_PATH)
 
 # ── JSON helpers (atomic write) ───────────────────────────────────────
 json_cache = {}
 
+def get_json_file_list():
+    if JSON_FILES:
+        selected = []
+        missing = []
+        for file_name in JSON_FILES:
+            if (json_folder / file_name).exists():
+                selected.append(file_name)
+            else:
+                missing.append(file_name)
+        if missing:
+            print(f"[WARNING] Missing JSON files: {missing}")
+        return selected
+    return [p.name for p in sorted(json_folder.glob("*.json")) if p.is_file()]
+
+json_list = get_json_file_list()
+print(f"[REVIEW] Using JSON files: {json_list}")
+
+
 def load_json(experiment_idx: int):
     if experiment_idx in json_cache:
         return json_cache[experiment_idx]
-    json_path = JSON_FOLDER / f"experiment_{experiment_idx}.json"
+    json_filename = f"experiment_{experiment_idx}.json"
+    if json_filename not in json_list:
+        return None
+    json_path = json_folder / json_filename
     if not json_path.exists():
         return None
     with open(json_path, "r") as f:
@@ -66,7 +87,7 @@ def save_json(experiment_idx: int):
 # ── Collect all classified images ─────────────────────────────────────
 all_images = []
 for cls in CLASSES:
-    folder = OUTPUT_BASE / cls
+    folder = output_base / cls
     if not folder.exists():
         continue
     for img_path in sorted(folder.glob("*.jpg")) + sorted(folder.glob("*.png")):
@@ -75,7 +96,7 @@ for cls in CLASSES:
 all_images.sort(key=lambda x: x[0].name)
 
 if not all_images:
-    print(f"[REVIEW] No classified images found in {OUTPUT_BASE}")
+    print(f"[REVIEW] No classified images found in {output_base}")
     exit()
 
 print(f"[REVIEW] Found {len(all_images)} images to review")
@@ -115,16 +136,11 @@ for idx, (img_path, current_class) in enumerate(all_images):
         print(f"[SKIP] No JSON for experiment {experiment_idx}")
         continue
     json_path, data = result
-
-    # Model prediction
-    pil_img         = PILImage.create(img_path)
-    label, _, probs = learn.predict(pil_img)
-    confidence      = probs.max().item()
-    model_label     = str(label).lower().replace(" ", "_")
+    sample_data = data[sample_key]
 
     # Matching video path
     video_stem = img_path.stem                          # e.g. clip_0_11
-    video_path = VIDEO_FOLDER / (video_stem + ".mp4")
+    video_path = clips_folder / (video_stem + ".mp4")
     cap        = cv2.VideoCapture(str(video_path)) if video_path.exists() else None
     fps        = cap.get(cv2.CAP_PROP_FPS) if cap else 25
     wait_ms    = max(1, int(1000 / fps))
@@ -141,13 +157,20 @@ for idx, (img_path, current_class) in enumerate(all_images):
         continue
     static_img = resize_to_height(static_img, TARGET_H)
 
+    current_class = img_path.parent.name
+    image_classification = sample_data.get("image_classification", current_class)
+    voltage = sample_data.get("voltage", "N/A")
+    flow_rate = sample_data.get("flow_rate", "N/A")
+
     info_lines = [
         (f"[{idx+1}/{len(all_images)}]",          (200, 200, 200)),
         (f"{img_path.name}",                       (200, 200, 200)),
         ("",                                        (0, 0, 0)),
-        (f"Current: {current_class}",              (0, 255, 0)),
-        (f"Model:   {model_label}",                (0, 200, 255)),
-        (f"Conf:    {confidence:.1%}",             (0, 200, 255)),
+        (f"Folder: {current_class}",               (0, 255, 0)),
+        (f"JSON:   {image_classification}",       (0, 255, 255)),
+        ("",                                        (0, 0, 0)),
+        (f"voltage:   {voltage}",                 (200, 200, 200)),
+        (f"flow_rate: {flow_rate}",               (200, 200, 200)),
         ("",                                        (0, 0, 0)),
     ] + [(f"{i+1}: {cls}", (180, 180, 180)) for i, cls in enumerate(CLASSES)] + [
         ("",                                        (0, 0, 0)),
@@ -190,19 +213,29 @@ for idx, (img_path, current_class) in enumerate(all_images):
             exit()
 
         elif key == ord('n'):
-            print(f"  [{idx+1}] Confirmed: {current_class}")
+            if image_classification != current_class:
+                sample_data["image_classification"] = current_class
+                save_json(experiment_idx)
+                print(f"  [{idx+1}] Confirmed: {current_class} (JSON updated)")
+            else:
+                print(f"  [{idx+1}] Confirmed: {current_class}")
             decided = True
 
         elif key in [ord(str(i)) for i in range(1, len(CLASSES) + 1)]:
             new_class = CLASSES[int(chr(key)) - 1]
 
             if new_class == current_class:
-                print(f"  [{idx+1}] Same class confirmed: {current_class}")
+                if image_classification != current_class:
+                    sample_data["image_classification"] = current_class
+                    save_json(experiment_idx)
+                    print(f"  [{idx+1}] Confirmed: {current_class} (JSON updated)")
+                else:
+                    print(f"  [{idx+1}] Same class confirmed: {current_class}")
             else:
-                new_folder = OUTPUT_BASE / new_class
+                new_folder = output_base / new_class
                 os.makedirs(new_folder, exist_ok=True)
                 shutil.move(str(img_path), str(new_folder / img_path.name))
-                data[sample_key]["spray_mode"] = new_class
+                sample_data["image_classification"] = new_class
                 save_json(experiment_idx)
                 print(f"  [{idx+1}] Changed: {current_class} → {new_class}")
 

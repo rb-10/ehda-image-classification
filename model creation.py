@@ -18,7 +18,7 @@ from pathlib import Path
 import os
 
 # ── Config ────────────────────────────────────────────────────────────
-DATASET_PATH  = Path("../../save_electrospray/dataset/processed_images/training")
+DATASET_PATH  = Path(r"dataset\processed_images\training")
 MODEL_ARCH   = squeezenet1_1
 EPOCHS       = 10
 BATCH_SIZE   = 64

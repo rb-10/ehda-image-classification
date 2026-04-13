@@ -1,6 +1,6 @@
 import cv2
 import os
-arr = [17]
+arr = [17, 18]
 for i in arr:
     # -------- SETTINGS --------
     file_name = "0"+str(i)
