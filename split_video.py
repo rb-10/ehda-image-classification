@@ -1,11 +1,11 @@
 import cv2
 import os
-arr = [17, 18]
-for i in arr:
+from pathlib import Path
+
+def split_video(folder, file_name):
     # -------- SETTINGS --------
-    file_name = "0"+str(i)
-    input_video = rf"C:\Users\HV\Desktop\bruno_work\save_electrospray\Ethanol\{file_name}.mp4"
-    output_folder = r"C:\Users\HV\Desktop\bruno_work\save_electrospray\Ethanol\SPLIT CLIPS"
+    input_video = str(file_name)
+    output_folder = folder / 'SPLIT CLIPS'
     frames_per_clip = 40
     # --------------------------
 
@@ -31,7 +31,7 @@ for i in arr:
     while True:
         frames = []
 
-        # Collect 25 frames
+        # Collect frames for one clip
         for i in range(frames_per_clip):
             ret, frame = cap.read()
             if not ret:
@@ -41,7 +41,9 @@ for i in arr:
         if len(frames) < frames_per_clip:
             break  # stop if not enough frames left
 
-        output_path = os.path.join(output_folder, f"clip_{file_name}_{clip_index:03d}.mp4")
+        # Use only the filename stem for output naming
+        video_stem = Path(file_name).stem
+        output_path = os.path.join(output_folder, f"clip_{video_stem}_{clip_index:03d}.mp4")
 
         fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
         out = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
@@ -55,5 +57,11 @@ for i in arr:
         clip_index += 1
 
     cap.release()
-
+    print(output_folder)
     print("Done.")
+
+if __name__ == "__main__":
+    solution = "ethanol_hv_nozzle"
+    folder = Path(rf"C:\Users\HV\Desktop\bruno_work\save_electrospray\{solution}")
+    for file_name in Path(folder / 'raw').glob('*.mp4'):
+        split_video(folder, file_name)

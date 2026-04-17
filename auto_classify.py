@@ -21,9 +21,9 @@ import tempfile
 
 # ── Config ────────────────────────────────────────────────────────────
 MODEL_PATH   = "final_model/export.pkl"
-CONFIDENCE_THRESHOLD = 0.90   # below this → saved as "unconclusive"
-RECLASSIFY_EXISTING = True  # True = re-run classification even if JSON already has image_classification
-SOLUTION = "Ethanol"
+CONFIDENCE_THRESHOLD = 0.80   # below this → saved as "unconclusive"
+RECLASSIFY_EXISTING = False  # True = re-run classification even if JSON already has image_classification
+SOLUTION = "DMF"
 JSON_FOLDER  = Path(rf"C:\Users\HV\Desktop\bruno_work\save_electrospray\{SOLUTION}\Current")
 INPUT_FOLDER = Path(rf"C:\Users\HV\Desktop\bruno_work\save_electrospray\{SOLUTION}\PROCESSED CLIPS")
 OUTPUT_BASE  = Path(rf"C:\Users\HV\Desktop\bruno_work\save_electrospray\{SOLUTION}\CLASSIFIED")

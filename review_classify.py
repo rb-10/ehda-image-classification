@@ -26,8 +26,8 @@ import numpy as np
 from pathlib import Path
 
 # ── Config ────────────────────────────────────────────────────────────
-liquid = "Ethanol"
-base = Path(r"C:\Users\Bruno Duarte\Documents\datasets")
+liquid = "DMF"
+base = Path(r"C:\Users\HV\Desktop\bruno_work\save_electrospray")
 json_folder = base / liquid / "Current"
 images_folder = base / liquid / "PROCESSED CLIPS"
 clips_folder = base / liquid / "SPLIT CLIPS"
@@ -36,7 +36,7 @@ output_base = base / liquid / "CLASSIFIED"
 
 # If json_files is empty, the script will load all available JSON files in json_folder.
 # Otherwise specify the exact filenames to review, e.g. ["experiment_0.json", "experiment_1.json"].
-JSON_FILES   = ['experiment_16.json', 'experiment_17.json']
+JSON_FILES   = ['experiment_10.json', 'experiment_11.json']
 
 CLASSES = ["cone_jet", "dripping", "intermitent", "multi_jet", "unconclusive", "undefined"]
 
@@ -163,7 +163,7 @@ for idx, (img_path, current_class) in enumerate(all_images):
     flow_rate = sample_data.get("flow_rate", "N/A")
 
     info_lines = [
-        (f"[{idx+1}/{len(all_images)}]",          (200, 200, 200)),
+        (f"[{idx}/{len(all_images)}]",          (200, 200, 200)),
         (f"{img_path.name}",                       (200, 200, 200)),
         ("",                                        (0, 0, 0)),
         (f"Folder: {current_class}",               (0, 255, 0)),
@@ -216,9 +216,9 @@ for idx, (img_path, current_class) in enumerate(all_images):
             if image_classification != current_class:
                 sample_data["image_classification"] = current_class
                 save_json(experiment_idx)
-                print(f"  [{idx+1}] Confirmed: {current_class} (JSON updated)")
+                print(f"  [{idx}] Confirmed: {current_class} (JSON updated)")
             else:
-                print(f"  [{idx+1}] Confirmed: {current_class}")
+                print(f"  [{idx}] Confirmed: {current_class}")
             decided = True
 
         elif key in [ord(str(i)) for i in range(1, len(CLASSES) + 1)]:
@@ -228,16 +228,16 @@ for idx, (img_path, current_class) in enumerate(all_images):
                 if image_classification != current_class:
                     sample_data["image_classification"] = current_class
                     save_json(experiment_idx)
-                    print(f"  [{idx+1}] Confirmed: {current_class} (JSON updated)")
+                    print(f"  [{idx}] Confirmed: {current_class} (JSON updated)")
                 else:
-                    print(f"  [{idx+1}] Same class confirmed: {current_class}")
+                    print(f"  [{idx}] Same class confirmed: {current_class}")
             else:
                 new_folder = output_base / new_class
                 os.makedirs(new_folder, exist_ok=True)
                 shutil.move(str(img_path), str(new_folder / img_path.name))
                 sample_data["image_classification"] = new_class
                 save_json(experiment_idx)
-                print(f"  [{idx+1}] Changed: {current_class} → {new_class}")
+                print(f"  [{idx}] Changed: {current_class} → {new_class}")
 
             decided = True
 

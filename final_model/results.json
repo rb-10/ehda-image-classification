@@ -10,6 +10,6 @@
         "intermitent",
         "multi_jet"
     ],
-    "accuracy": 1.0,
-    "val_loss": 0.0034838297870010138
+    "accuracy": 0.9956140518188477,
+    "val_loss": 0.017625611275434494
 }

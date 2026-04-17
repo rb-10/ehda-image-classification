@@ -3,8 +3,8 @@ from pathlib import Path
 import cv2
 import random
 
-class_folder = Path(r"C:\Users\HV\Desktop\bruno_work\save_electrospray\Ethanol\SPLIT CLIPS")
-output_base = Path(r"C:\Users\HV\Desktop\bruno_work\save_electrospray\Ethanol\PROCESSED CLIPS")
+class_folder = Path(r"C:\Users\HV\Desktop\bruno_work\save_electrospray\DMF\SPLIT CLIPS")
+output_base = Path(r"C:\Users\HV\Desktop\bruno_work\save_electrospray\DMF\PROCESSED CLIPS")
 
 video_files = sorted(list(class_folder.glob('*.mp4')), reverse=True)
 

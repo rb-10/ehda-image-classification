@@ -46,7 +46,7 @@ plt.legend(handles=legend_handles, title="Image Classification")
 
 plt.ylabel("Voltage (V)")
 plt.xlabel("Flow Rate (uL/min)")
-plt.title("Electrospray Mapping: Voltage vs Flow Rate")
+plt.title("Electrospray Mapping DMF: Voltage vs Flow Rate")
 plt.grid(True)
 plt.tight_layout()
 plt.show()
