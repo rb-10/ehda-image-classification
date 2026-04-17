@@ -57,7 +57,7 @@ def split_video(folder, file_name):
         clip_index += 1
 
     cap.release()
-    print(output_folder)
+    return output_folder
     print("Done.")
 
 if __name__ == "__main__":
